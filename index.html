@@ -5,17 +5,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="../assets/favicon.png" type="image/png" />
-    <script src="ics_parser.mjs"></script>
+
     <title>打工人日历</title>
 </head>
-<body onload="startTime()" style="background-color: #1a1919;color: white;">
+<body onload="startTime()" style="background-color: cornflowerblue;color: white;">
 </br>
 <div class="mume markdown-preview  ">
     <h1 align="center">打工人日历</h1>
     <center><img src="static/moyu.gif"></center>
     <div style="margin: 20px auto; max-width: 900px;">
-        <h2>【摸鱼办】提醒您：</h2>
+        <h2>【川摸鱼办】提醒您：</h2>
         <h4>当前时间：<font color="#33FFFF"><span id="nowDateTimeSpan"></span></font> </h4>
+        <div id="xiaban" >
+        <h4>离今天18点下班还有：<font color="#33FFFF"><span id="xiabantime"></span></font> </h4>
+        </div>
        <a id="greeting"></a>摸鱼人！工作再累，一定不要忘记摸鱼哦！有事没事起身去茶水间，去厕所，去廊道走走别老在工位上坐着，钱是老板的,但命是自己的。</p>
         <ul id="favs"></ul>
         <p>
@@ -72,7 +75,8 @@ favs.innerHTML += getResult(now).map(([a, b]) => `<li>距离${FAVS[b]}还有:${a
 </script>
 <script language="JavaScript">
     function startTime()   
-    {   
+    {
+
         var today=new Date();//定义日期对象   
         var yyyy = today.getFullYear();//通过日期对象的getFullYear()方法返回年    
         var MM = today.getMonth()+1;//通过日期对象的getMonth()方法返回年    
@@ -92,8 +96,28 @@ favs.innerHTML += getResult(now).map(([a, b]) => `<li>距离${FAVS[b]}还有:${a
         if(today.getDay()==3)   day   =   "星期三 " 
         if(today.getDay()==4)   day   =   "星期四 " 
         if(today.getDay()==5)   day   =   "星期五 " 
-        if(today.getDay()==6)   day   =   "星期六 " 
-        document.getElementById('nowDateTimeSpan').innerHTML=yyyy+"-"+MM +"-"+ dd +" " + hh+":"+mm+":"+ss+"   " + day;   
+        if(today.getDay()==6)   day   =   "星期六 "
+
+        var xiabanToday=new Date()
+        xiabanToday.setHours(18,0,0,0)
+
+
+        document.getElementById('nowDateTimeSpan').innerHTML=yyyy+"-"+MM +"-"+ dd +" " + hh+":"+mm+":"+ss+"   " + day;
+        if(xiabanToday-today>0){
+            var float_hour_accuracy=(xiabanToday - today) / (1000 * 60 * 60)
+            var xiaban_hour=parseInt(float_hour_accuracy)
+            var xiaban_fen=parseInt((parseFloat(float_hour_accuracy)-xiaban_hour)*60)
+            var xiaban_miao=parseInt((float_hour_accuracy-xiaban_hour-xiaban_fen/60)*60*60)
+            xiaban_miao+=1
+
+        document.getElementById('xiabantime').innerHTML=xiaban_hour+" 小时"+xiaban_fen+" 分钟"+xiaban_miao+" 秒";
+        }
+        else{
+            document.getElementById('xiabantime').innerHTML="已经下班啦"
+        }
+        if(day==="星期六 " || day=== "星期日 "){
+            document.getElementById("xiaban").hidden='hidden';
+        }
         setTimeout('startTime()',1000);//每一秒中重新加载startTime()方法 
     }   
 
